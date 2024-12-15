@@ -23,6 +23,6 @@ fn main() {
             }
         };
         // 結果を表示
-        println!("{}", result);
+        println!(" => {}", result);
     }
 }
