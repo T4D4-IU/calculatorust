@@ -22,26 +22,9 @@ fn main() {
             continue;
         }
         // 式の計算
-        let left: f64 = if tokens[0] == "mem" {
-            memory
-        } else {
-            tokens[0].parse().unwrap()
-        };
-        let right: f64 = if tokens[2] == "mem" {
-            memory
-        } else {
-            tokens[2].parse().unwrap()
-        };
-        let result = match tokens[1] {
-            "+" => left + right,
-            "-" => left - right,
-            "*" => left * right,
-            "/" => left / right,
-            _ => {
-                // 入力が不正な場合
-                unreachable!();
-            }
-        };
+        let left: f64 = eval_token(tokens[0], memory);
+        let right: f64 = eval_token(tokens[2], memory);
+        let result = eval_expression(left, tokens[1], right);
         // 結果を表示
         print_output(result);
 
@@ -51,4 +34,25 @@ fn main() {
 
 fn print_output(value: f64) {
     println!(" => {}", value);
+}
+
+fn eval_token(token: &str, memory: f64) -> f64 {
+    if token == "mem" {
+        memory
+    } else {
+        token.parse().unwrap()
+    }
+}
+
+fn eval_expression(left: f64, token: &str, right: f64) -> f64 {
+    match token {
+        "+" => left + right,
+        "-" => left - right,
+        "*" => left * right,
+        "/" => left / right,
+        _ => {
+            // 入力が不正な場合
+            unreachable!();
+        }
+    }
 }
