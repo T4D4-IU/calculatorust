@@ -21,8 +21,8 @@ fn main() {
             continue;
         }
         // 式の計算
-        let left = eval_token(tokens[0], memories);
-        let right = eval_token(tokens[2], memories);
+        let left = eval_token(tokens[0], &memories);
+        let right = eval_token(tokens[2], &memories);
         let result = eval_expression(left, tokens[1], right);
         // 結果を表示
         print_output(result);
@@ -35,7 +35,7 @@ fn print_output(value: f64) {
     println!(" => {}", value);
 }
 
-fn eval_token(token: &str, memories: Vec<f64>) -> f64 {
+fn eval_token(token: &str, memories: &Vec<f64>) -> f64 {
     if token.starts_with("mem") {
         let slot_index: usize = token[3..].parse().unwrap();
         memories[slot_index]
