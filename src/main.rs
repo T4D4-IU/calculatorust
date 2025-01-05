@@ -2,7 +2,7 @@ use std::io::stdin;
 
 fn main() {
     let mut memory = Memory {
-        slots: vec![0.0; 10],
+        slots: vec![],
     };
     let mut prev_result: f64 = 0.0;
     for line in stdin().lines() {
@@ -34,19 +34,35 @@ fn main() {
 }
 
 struct Memory {
-    slots: Vec<f64>,
+    slots: Vec<(String, f64)>,
 }
 
 fn add_and_print_memory(memory: &mut Memory, token: &str, prev_result: f64) {
-    let slot_index: usize = token[3..token.len() -1].parse().unwrap();
-    memory.slots[slot_index] += prev_result;
-    print_output(memory.slots[slot_index]);
+    let slot_name = &token[3..token.len() -1];
+    // 全てのメモリを探索
+    for slot in memory.slots.iter_mut() {
+        if slot.0 == slot_name {
+            // メモリが見つかったので値を更新・表示して終了
+            slot.1 += prev_result;
+            print_output(slot.1);
+            return;
+        }
+    }
+    // メモリが見つからなかったので最後に追加
+    memory.slots.push((slot_name.to_string(), prev_result));
+    print_output(prev_result);
 }
 
 fn eval_token(token: &str, memory: &Memory) -> f64 {
     if token.starts_with("mem") {
-        let slot_index: usize = token[3..].parse().unwrap();
-        memory.slots[slot_index]
+        let slot_name = &token[3..];
+        for slot in &memory.slots {
+            if slot.0 == slot_name {
+                return slot.1;
+            }
+        }
+        // メモリが見つからなかった場合
+        0.0
     } else {
         token.parse().unwrap()
     }
