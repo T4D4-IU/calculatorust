@@ -1,9 +1,7 @@
 use std::io::stdin;
 
 fn main() {
-    let mut memory = Memory {
-        slots: vec![],
-    };
+    let mut memory = Memory::new();
     let mut prev_result: f64 = 0.0;
     for line in stdin().lines() {
         // 1行読み取って空行なら終了
@@ -38,6 +36,12 @@ struct Memory {
 }
 
 impl Memory {
+    fn new()-> Self {
+        Self {
+            slots: Vec::new(),
+        }
+    }
+
     fn add_and_print(&mut self, token: &str, prev_result: f64) {
         let slot_name = &token[3..token.len() -1];
         // 全てのメモリを探索
