@@ -28,9 +28,9 @@ fn main() {
             }
             _ => {
                 // 式の値の計算
-                let left = eval_token(tokens[0], &memory);
-                let right = eval_token(tokens[2], &memory);
-                let result = eval_expression(left, tokens[1], right);
+                let left = eval_token(&tokens[0], &memory);
+                let right = eval_token(&tokens[2], &memory);
+                let result = eval_expression(left, &tokens[1], right);
                 // 結果の表示
                 print_output(result);
                 prev_result = result;
@@ -104,7 +104,7 @@ impl Token {
             _ => Self::Number(value.parse().unwrap()),
         }
     }
-    fn split(line: &str) -> Vec<Self> {
+    fn split(text: &str) -> Vec<Self> {
         text.split(char::is_whitespace)
             .map(Self::parse)
             .collect()
@@ -112,24 +112,28 @@ impl Token {
 }
 
 fn eval_token(token: &Token, memory: &Memory) -> f64 {
-    if token.starts_with("mem") {
-        let slot_name = &token[3..];
-        // self.slots.get(slot_name)の戻り値はOption<&f64>
-        // Optionの中身が参照のままでは値を返すことができない
-        // copied()で値をコピーしてOption<f64>に変換する
-        // unwrap_or()でOptionがNoneの場合に0.0を返す
-        self.slots.get(slot_name).copied().unwrap_or(0.0)
-    } else {
-        token.parse().unwrap()
+    match token {
+        Token::Number(value) => {
+            // 数値の場合はそのまま返す
+            *value
+        }
+        Token::MemoryRef(memory_name) => {
+            // メモリを参照しているので、メモリの値を返す
+            memory.get(memory_name)
+        }
+        _ => {
+            // それ以外の場合はエラー
+            unreachable!();
+        }
     }
 }
 
-fn eval_expression(left: f64, token: &str, right: f64) -> f64 {
-    match token {
-        "+" => left + right,
-        "-" => left - right,
-        "*" => left * right,
-        "/" => left / right,
+fn eval_expression(left: f64, operator: &Token, right: f64) -> f64 {
+    match operator {
+        Token::Plus => left + right,
+        Token::Minus => left - right,
+        Token::Asterisk => left * right,
+        Token::Slash => left / right,
         _ => {
             // 入力が不正な場合
             unreachable!();
