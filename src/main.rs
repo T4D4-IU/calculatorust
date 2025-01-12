@@ -28,8 +28,6 @@ fn main() {
             }
             _ => {
                 // 式の値の計算
-                // let left = eval_token(&tokens[0], &memory);
-                // let right = eval_token(&tokens[2], &memory);
                 let result = eval_expression(&tokens, &memory);
                 // 結果の表示
                 print_output(result);
